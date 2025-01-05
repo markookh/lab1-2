@@ -1,0 +1,50 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Simple Weather App</title>
+  </head>
+  <body>
+    <h1>Weather App</h1>
+    <label for="city">Enter city:</label>
+    <input type="text" id="city" />
+    <button onclick="getWeather()">Get Weather</button>
+
+    <div id="result"></div>
+
+    <script>
+      async function getWeather() {
+        const city = document.getElementById("city").value.trim();
+        if (!city) {
+          document.getElementById("result").innerText = "Please enter a city.";
+          return;
+        }
+
+        try {
+          const response = await fetch(`/weather?city=${city}`);
+          if (!response.ok) {
+            document.getElementById("result").innerText =
+              "Error: Could not fetch weather";
+            return;
+          }
+
+          const data = await response.json();
+          if (data.error) {
+            document.getElementById("result").innerText = data.error;
+          } else {
+            document.getElementById("result").innerText = `
+              Weather in ${data.name}: 
+              ${data.weather[0].description}, 
+              temperature: ${data.main.temp} °C
+            `;
+          }
+        } catch (error) {
+          document.getElementById("result").innerText =
+            "An error occurred while fetching weather data.";
+        }
+      }
+    </script>
+  </body>
+</html>
+
